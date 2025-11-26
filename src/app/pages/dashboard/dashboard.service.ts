@@ -18,16 +18,14 @@ export interface VehicleData {
 })
 export class DashboardService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3001'; // Ajustado para sua API real
+  private apiUrl = 'http://localhost:3001'; 
 
-  // Busca lista de veículos para o Dropdown e Cards [cite: 74, 75]
   getVehicles(): Observable<Veiculo[]> {
     return this.http.get<VeiculosAPI>(`${this.apiUrl}/vehicles`).pipe(
-      map(response => response.vehicles) // O PDF/Model diz que retorna um objeto { vehicles: [...] }
+      map(response => response.vehicles)
     );
   }
 
-  // Busca dados de telemetria pelo VIN 
   getVehicleData(vin: string): Observable<VehicleData> {
     return this.http.post<VehicleData>(`${this.apiUrl}/vehicleData`, { vin });
   }
