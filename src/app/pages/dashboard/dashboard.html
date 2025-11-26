@@ -1,0 +1,155 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/home">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Ford_logo_flat.svg" alt="Ford" width="40" height="20" class="d-inline-block align-text-top me-2 bg-white rounded-pill p-1">
+      Ford System
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        </li>
+      </ul>
+      
+      <div class="d-flex">
+        <a class="btn btn-outline-light btn-sm" routerLink="/login">
+          <i class="bi bi-box-arrow-right"></i> Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid mt-4">
+  
+  <div class="row mb-4 text-center">
+    <div class="col">
+      <h2 class="text-primary fw-bold">Dashboard FORD</h2>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-4 g-3">
+    
+    <div class="col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <label class="form-label text-muted">Veículo</label>
+          <select class="form-select form-select-lg mb-3" 
+                  [(ngModel)]="veiculoSelecionado" 
+                  (change)="aoSelecionarVeiculo()">
+            <option *ngFor="let v of todosVeiculos" [ngValue]="v">
+              {{ v.vehicle }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Total de Vendas</h6>
+          <h3 class="text-primary fw-bold">
+            {{ veiculoSelecionado?.volumetotal || 0 }}
+          </h3>
+          <small class="text-muted">unid.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Conectados</h6>
+          <h3 class="text-primary fw-bold">
+            {{ veiculoSelecionado?.connected || 0 }}
+          </h3>
+          <small class="text-muted">unid.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Update Software</h6>
+          <h3 class="text-primary fw-bold">
+            {{ veiculoSelecionado?.softwareUpdates || 0 }}
+          </h3>
+          <small class="text-muted">unid.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8 text-center">
+      <img *ngIf="veiculoSelecionado" 
+           [src]="veiculoSelecionado.img" 
+           alt="Veículo Selecionado" 
+           class="img-fluid" 
+           style="max-height: 300px;">
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12">
+      
+      <div class="bg-primary text-white p-2 rounded-top d-flex justify-content-between align-items-center">
+        <span class="fw-bold ps-3">Status do Veículo</span>
+        <div class="input-group input-group-sm w-auto pe-3">
+           <input type="text" 
+                  class="form-control" 
+                  placeholder="Digite o cód. VIN..." 
+                  #vinInput
+                  (input)="buscarVin(vinInput.value)">
+        </div>
+      </div>
+
+      <div class="table-responsive shadow-sm">
+        <table class="table table-bordered mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Código - VIN</th>
+              <th>Odômetro</th>
+              <th>Nível de Combustível</th>
+              <th>Status</th>
+              <th>Lat.</th>
+              <th>Long.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="dadosTelemetria">
+              <td>{{ vinInput.value }}</td>
+              <td>{{ dadosTelemetria.odometro }} km</td>
+              <td>{{ dadosTelemetria.nivelCombustivel }}%</td>
+              <td>
+                <span class="badge" 
+                      [ngClass]="dadosTelemetria.status === 'on' ? 'bg-success' : 'bg-danger'">
+                  {{ dadosTelemetria.status | uppercase }}
+                </span>
+              </td>
+              <td>{{ dadosTelemetria.lat }}</td>
+              <td>{{ dadosTelemetria.long }}</td>
+            </tr>
+            <tr *ngIf="!dadosTelemetria">
+              <td colspan="6" class="text-center text-muted py-3">
+                <span *ngIf="erroTelemetria" class="text-danger">VIN não encontrado.</span>
+                <span *ngIf="!erroTelemetria">Digite um VIN válido (ex: 2FRHDUYS2Y63NHD22454) para ver os dados.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
